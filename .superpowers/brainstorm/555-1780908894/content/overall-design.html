@@ -1,0 +1,148 @@
+<h2>Claude Monitor 整体设计方案</h2>
+<p class="subtitle">所有已确认设计的汇总</p>
+
+<div class="section">
+  <h3>一、技术栈</h3>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 13px;">
+    <div style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 12px;">
+      <div style="color: #4CAF50; font-weight: bold; margin-bottom: 6px;">后端</div>
+      <ul style="margin: 0; padding-left: 16px; line-height: 1.8;">
+        <li>JDK 21 + SpringBoot 3.0</li>
+        <li>SQLite（嵌入式数据库）</li>
+        <li>JSONL 文件增量解析器</li>
+        <li>Hooks 事件接收端点</li>
+        <li>REST API 供前端调用</li>
+      </ul>
+    </div>
+    <div style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 12px;">
+      <div style="color: #2196F3; font-weight: bold; margin-bottom: 6px;">前端（Tauri 桌面应用）</div>
+      <ul style="margin: 0; padding-left: 16px; line-height: 1.8;">
+        <li>Tauri 2.x（Rust 核心 + WebView）</li>
+        <li>前端框架：React + TypeScript</li>
+        <li>动画：Lottie（轻量矢量动画）</li>
+        <li>图表：ECharts / Chart.js</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 20px;">
+  <h3>二、系统架构</h3>
+  <div class="mockup">
+    <div class="mockup-body" style="padding: 20px; font-size: 13px;">
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <!-- 第一层：数据源 -->
+        <div style="display: flex; align-items: center; gap: 8px; justify-content: center;">
+          <div style="padding: 8px 14px; background: #1a237e; border-radius: 6px; text-align: center;">
+            <div style="font-weight: bold; color: #90caf9; font-size: 12px;">JSONL 文件</div>
+            <div style="font-size: 10px; color: #666;">定时扫描 5s</div>
+          </div>
+          <div style="padding: 8px 14px; background: #1a237e; border-radius: 6px; text-align: center;">
+            <div style="font-weight: bold; color: #90caf9; font-size: 12px;">Hooks 事件</div>
+            <div style="font-size: 10px; color: #666;">实时推送</div>
+          </div>
+        </div>
+        <!-- 箭头 -->
+        <div style="text-align: center; color: #4CAF50; font-size: 18px;">↓</div>
+        <!-- 第二层：后端 -->
+        <div style="padding: 12px; background: #1b5e20; border-radius: 8px; text-align: center;">
+          <div style="font-weight: bold; color: #a5d6a7;">SpringBoot 后端</div>
+          <div style="font-size: 11px; color: #888; margin-top: 4px;">数据采集 → 解析 → 存储 → API</div>
+          <div style="font-size: 10px; color: #666; margin-top: 2px;">SQLite 嵌入式数据库</div>
+        </div>
+        <!-- 箭头 -->
+        <div style="text-align: center; color: #4CAF50; font-size: 18px;">↓ REST API + WebSocket</div>
+        <!-- 第三层：前端 -->
+        <div style="display: flex; align-items: center; gap: 12px; justify-content: center;">
+          <div style="padding: 10px 16px; background: #b71c1c; border-radius: 8px; text-align: center; flex: 1;">
+            <div style="font-weight: bold; color: #ef9a9a;">悬浮窗</div>
+            <div style="font-size: 10px; color: #888;">折叠/展开 + Lottie 动画</div>
+            <div style="font-size: 10px; color: #666;">WebSocket 实时状态</div>
+          </div>
+          <div style="padding: 10px 16px; background: #b71c1c; border-radius: 8px; text-align: center; flex: 1;">
+            <div style="font-weight: bold; color: #ef9a9a;">Web 仪表盘</div>
+            <div style="font-size: 10px; color: #888;">用量/费用/趋势/历史</div>
+            <div style="font-size: 10px; color: #666;">REST API 查询</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 20px;">
+  <h3>三、功能模块</h3>
+  <div style="font-size: 13px; line-height: 2;">
+    <div style="display: grid; grid-template-columns: 150px 1fr; gap: 4px 12px; padding: 8px; background: rgba(76,175,80,0.1); border-radius: 6px; margin-bottom: 6px;">
+      <span style="color: #4CAF50; font-weight: bold;">P0 核心功能</span>
+      <span></span>
+      <span style="color: #90caf9;">Token 用量统计</span>
+      <span>per-session / per-day / per-month 的 token 消耗与费用估算</span>
+      <span style="color: #90caf9;">实时状态悬浮窗</span>
+      <span>折叠态动画图标 + 悬停展开数据面板，4 种状态动画</span>
+      <span style="color: #90caf9;">JSONL 解析器</span>
+      <span>增量扫描 .claude/projects 目录，提取 token / 工具 / 会话数据</span>
+      <span style="color: #90caf9;">Hooks 接收端</span>
+      <span>接收 PostToolUse / UserPromptSubmit / Stop 事件，驱动实时状态</span>
+    </div>
+    <div style="display: grid; grid-template-columns: 150px 1fr; gap: 4px 12px; padding: 8px; background: rgba(33,150,243,0.1); border-radius: 6px; margin-bottom: 6px;">
+      <span style="color: #2196F3; font-weight: bold;">P1 增强功能</span>
+      <span></span>
+      <span style="color: #90caf9;">Web 仪表盘</span>
+      <span>概览卡片 + 趋势图 + 工具分布 + 会话列表</span>
+      <span style="color: #90caf9;">形象系统</span>
+      <span>内置熊猫/猫咪/机器人，Lottie 动画，支持自定义形象包</span>
+      <span style="color: #90caf9;">工具调用统计</span>
+      <span>各工具使用频率、耗时、参数分析</span>
+    </div>
+    <div style="display: grid; grid-template-columns: 150px 1fr; gap: 4px 12px; padding: 8px; background: rgba(158,158,158,0.1); border-radius: 6px;">
+      <span style="color: #9E9E9E; font-weight: bold;">P2 未来功能</span>
+      <span></span>
+      <span style="color: #90caf9;">会话历史浏览</span>
+      <span>对话内容查看、搜索、回放</span>
+      <span style="color: #90caf9;">预算告警</span>
+      <span>达到预算阈值时通知</span>
+      <span style="color: #90caf9;">多项目对比</span>
+      <span>跨项目的用量对比分析</span>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 20px;">
+  <h3>四、数据模型</h3>
+  <div style="font-size: 12px; line-height: 1.6;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+      <div style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 12px;">
+        <div style="color: #4CAF50; font-weight: bold; margin-bottom: 6px;">Session（会话）</div>
+        <div style="color: #aaa;">
+          id, project, model, startedAt, endedAt,<br>
+          totalInputTokens, totalOutputTokens,<br>
+          totalCacheTokens, estimatedCost,<br>
+          toolCallCount, status
+        </div>
+      </div>
+      <div style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 12px;">
+        <div style="color: #2196F3; font-weight: bold; margin-bottom: 6px;">ToolCall（工具调用）</div>
+        <div style="color: #aaa;">
+          id, sessionId, toolName, inputParams,<br>
+          timestamp, duration
+        </div>
+      </div>
+      <div style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 12px;">
+        <div style="color: #FF9800; font-weight: bold; margin-bottom: 6px;">DailyUsage（日用量）</div>
+        <div style="color: #aaa;">
+          date, totalInputTokens, totalOutputTokens,<br>
+          totalCacheTokens, estimatedCost,<br>
+          sessionCount, toolCallCount
+        </div>
+      </div>
+      <div style="background: rgba(255,255,255,0.03); border-radius: 8px; padding: 12px;">
+        <div style="color: #9C27B0; font-weight: bold; margin-bottom: 6px;">AgentStatus（实时状态）</div>
+        <div style="color: #aaa;">
+          sessionId, status (working/done/waiting/idle),<br>
+          currentTool, lastUpdatedAt
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

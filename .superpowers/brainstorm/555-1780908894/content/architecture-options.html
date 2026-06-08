@@ -1,0 +1,52 @@
+<h2>架构方案对比</h2>
+<p class="subtitle">两种整体架构方案，请选择你偏好的方向</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>一体化 Tauri 应用</h3>
+      <p>Tauri 桌面应用同时承载悬浮窗 + Web 仪表盘。SpringBoot 后端仅做数据采集和存储。</p>
+      <div style="margin-top: 12px; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 6px; font-size: 13px;">
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div><strong>架构：</strong> Tauri (前端) ←→ SpringBoot (后端 API)</div>
+          <div><strong>悬浮窗：</strong> Tauri 多窗口，原生 always-on-top</div>
+          <div><strong>仪表盘：</strong> Tauri 主窗口内嵌 WebView</div>
+          <div><strong>数据采集：</strong> SpringBoot 后端定时解析 JSONL + Hooks 推送</div>
+        </div>
+      </div>
+      <div class="pros-cons" style="margin-top: 12px;">
+        <div class="pros"><h4>优势</h4><ul><li>单一应用，体验统一</li><li>Tauri 多窗口原生支持悬浮</li><li>前端可复用（悬浮窗 + 仪表盘共享组件）</li></ul></div>
+        <div class="cons"><h4>劣势</h4><ul><li>Tauri + SpringBoot 两套技术栈需同时维护</li><li>动画资源需打包进应用</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>分离式：Tauri 悬浮窗 + 独立 Web 仪表盘</h3>
+      <p>悬浮窗是独立的 Tauri 轻应用，Web 仪表盘由 SpringBoot 直接渲染。两者通过后端 API 共享数据。</p>
+      <div style="margin-top: 12px; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 6px; font-size: 13px;">
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div><strong>架构：</strong> Tauri 悬浮窗 ←→ SpringBoot ←→ 浏览器仪表盘</div>
+          <div><strong>悬浮窗：</strong> 独立 Tauri 应用，极简，只做实时状态</div>
+          <div><strong>仪表盘：</strong> SpringBoot 内嵌前端，浏览器访问</div>
+          <div><strong>数据采集：</strong> 同方案 A</div>
+        </div>
+      </div>
+      <div class="pros-cons" style="margin-top: 12px;">
+        <div class="pros"><h4>优势</h4><ul><li>悬浮窗可独立启动，更轻量</li><li>仪表盘无需安装，浏览器即用</li><li>两个模块解耦，可独立迭代</li></ul></div>
+        <div class="cons"><h4>劣势</h4><ul><li>两个入口，体验稍分散</li><li>需分别启动服务</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top: 24px; padding: 16px; background: #1a1a2e; border-radius: 8px; border: 1px solid #4CAF50;">
+  <h3 style="color: #4CAF50; margin-bottom: 8px;">推荐方案 A：一体化 Tauri 应用</h3>
+  <p style="color: #e0e0e0; line-height: 1.6; margin: 0;">
+    统一入口、统一体验。Tauri 的多窗口机制天然支持悬浮窗，主窗口即可承载仪表盘。<br>
+    SpringBoot 后端专注数据采集和 API，Tauri 前端专注展示和交互。
+  </p>
+</div>

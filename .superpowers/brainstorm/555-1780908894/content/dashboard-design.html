@@ -1,0 +1,126 @@
+<h2>设计详情：Web 仪表盘</h2>
+<p class="subtitle">Token 用量与成本的统计面板</p>
+
+<div class="section">
+  <h3>仪表盘布局</h3>
+  <div class="mockup">
+    <div class="mockup-body" style="padding: 16px; background: #0d1117;">
+      <!-- 顶部导航 -->
+      <div class="mock-nav" style="display: flex; align-items: center; justify-content: space-between; padding: 8px 16px; background: #161b22; border-radius: 8px; margin-bottom: 12px;">
+        <span style="font-weight: bold; color: #e0e0e0;">🐼 Claude Monitor</span>
+        <div style="display: flex; gap: 16px; font-size: 12px; color: #888;">
+          <span style="color: #4CAF50;">仪表盘</span>
+          <span>会话历史</span>
+          <span>设置</span>
+        </div>
+      </div>
+
+      <!-- 概览卡片 -->
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px;">
+        <div style="background: #161b22; border-radius: 8px; padding: 12px; text-align: center;">
+          <div style="font-size: 11px; color: #888;">今日 Token</div>
+          <div style="font-size: 20px; color: #90caf9; font-weight: bold;">128.5K</div>
+          <div style="font-size: 10px; color: #4CAF50;">↑ 12% vs 昨日</div>
+        </div>
+        <div style="background: #161b22; border-radius: 8px; padding: 12px; text-align: center;">
+          <div style="font-size: 11px; color: #888;">今日费用</div>
+          <div style="font-size: 20px; color: #a5d6a7; font-weight: bold;">$1.23</div>
+          <div style="font-size: 10px; color: #f44336;">↑ 8% vs 昨日</div>
+        </div>
+        <div style="background: #161b22; border-radius: 8px; padding: 12px; text-align: center;">
+          <div style="font-size: 11px; color: #888;">本月累计</div>
+          <div style="font-size: 20px; color: #ce93d8; font-weight: bold;">$24.50</div>
+          <div style="font-size: 10px; color: #888;">预算: $50</div>
+        </div>
+        <div style="background: #161b22; border-radius: 8px; padding: 12px; text-align: center;">
+          <div style="font-size: 11px; color: #888;">会话数</div>
+          <div style="font-size: 20px; color: #ffcc80; font-weight: bold;">8</div>
+          <div style="font-size: 10px; color: #888;">今日活跃</div>
+        </div>
+      </div>
+
+      <!-- 图表区域 -->
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 8px; margin-bottom: 12px;">
+        <!-- Token 趋势 -->
+        <div style="background: #161b22; border-radius: 8px; padding: 12px;">
+          <div style="font-size: 12px; color: #888; margin-bottom: 8px;">Token 用量趋势（近7天）</div>
+          <div style="height: 120px; display: flex; align-items: flex-end; gap: 6px; padding: 0 8px;">
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+              <div style="width: 100%; background: linear-gradient(to top, #1565C0, #42A5F5); border-radius: 4px 4px 0 0; height: 45%;"></div>
+              <span style="font-size: 9px; color: #666;">周一</span>
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+              <div style="width: 100%; background: linear-gradient(to top, #1565C0, #42A5F5); border-radius: 4px 4px 0 0; height: 65%;"></div>
+              <span style="font-size: 9px; color: #666;">周二</span>
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+              <div style="width: 100%; background: linear-gradient(to top, #1565C0, #42A5F5); border-radius: 4px 4px 0 0; height: 35%;"></div>
+              <span style="font-size: 9px; color: #666;">周三</span>
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+              <div style="width: 100%; background: linear-gradient(to top, #1565C0, #42A5F5); border-radius: 4px 4px 0 0; height: 80%;"></div>
+              <span style="font-size: 9px; color: #666;">周四</span>
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+              <div style="width: 100%; background: linear-gradient(to top, #1565C0, #42A5F5); border-radius: 4px 4px 0 0; height: 55%;"></div>
+              <span style="font-size: 9px; color: #666;">周五</span>
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+              <div style="width: 100%; background: linear-gradient(to top, #1565C0, #42A5F5); border-radius: 4px 4px 0 0; height: 90%;"></div>
+              <span style="font-size: 9px; color: #666;">周六</span>
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+              <div style="width: 100%; background: linear-gradient(to top, #4CAF50, #81C784); border-radius: 4px 4px 0 0; height: 70%;"></div>
+              <span style="font-size: 9px; color: #4CAF50;">今天</span>
+            </div>
+          </div>
+        </div>
+        <!-- 工具调用分布 -->
+        <div style="background: #161b22; border-radius: 8px; padding: 12px;">
+          <div style="font-size: 12px; color: #888; margin-bottom: 8px;">工具调用分布</div>
+          <div style="font-size: 11px; line-height: 2;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <div style="width: 65%; height: 8px; background: #42A5F5; border-radius: 4px;"></div>
+              <span style="color: #e0e0e0;">Read 673</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <div style="width: 45%; height: 8px; background: #66BB6A; border-radius: 4px;"></div>
+              <span style="color: #e0e0e0;">Edit 330</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <div style="width: 30%; height: 8px; background: #FFA726; border-radius: 4px;"></div>
+              <span style="color: #e0e0e0;">Bash 188</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <div style="width: 25%; height: 8px; background: #AB47BC; border-radius: 4px;"></div>
+              <span style="color: #e0e0e0;">Grep 142</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <div style="width: 15%; height: 8px; background: #EF5350; border-radius: 4px;"></div>
+              <span style="color: #e0e0e0;">Write 67</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 最近会话 -->
+      <div style="background: #161b22; border-radius: 8px; padding: 12px;">
+        <div style="font-size: 12px; color: #888; margin-bottom: 8px;">最近会话</div>
+        <div style="font-size: 11px;">
+          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; padding: 6px 0; border-bottom: 1px solid #333; color: #666;">
+            <span>项目</span><span>模型</span><span>Token</span><span>费用</span><span>时长</span>
+          </div>
+          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; padding: 6px 0; border-bottom: 1px solid #222; color: #e0e0e0;">
+            <span>LGarant-backend</span><span>sonnet-4</span><span>45.2K</span><span>$0.34</span><span>32m</span>
+          </div>
+          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; padding: 6px 0; border-bottom: 1px solid #222; color: #e0e0e0;">
+            <span>claude-monitoring</span><span>sonnet-4</span><span>12.4K</span><span>$0.08</span><span>15m</span>
+          </div>
+          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; padding: 6px 0; color: #e0e0e0;">
+            <span>personal-site</span><span>opus-4</span><span>88.1K</span><span>$1.20</span><span>45m</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

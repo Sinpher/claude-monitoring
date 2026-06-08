@@ -1,0 +1,73 @@
+<h2>设计详情：数据采集层</h2>
+<p class="subtitle">如何从 Claude Code 获取监控数据</p>
+
+<div class="section">
+  <h3>数据流架构</h3>
+  <div class="mockup">
+    <div class="mockup-body" style="padding: 20px; font-size: 13px;">
+      <div style="display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
+        <div style="padding: 10px 16px; background: #1a237e; border-radius: 8px; text-align: center;">
+          <div style="font-weight: bold; color: #90caf9;">Claude Code</div>
+          <div style="font-size: 11px; color: #888;">JSONL 文件 + Hooks</div>
+        </div>
+        <div style="color: #4CAF50; font-size: 18px;">→</div>
+        <div style="padding: 10px 16px; background: #1b5e20; border-radius: 8px; text-align: center;">
+          <div style="font-weight: bold; color: #a5d6a7;">数据采集服务</div>
+          <div style="font-size: 11px; color: #888;">SpringBoot 后端</div>
+        </div>
+        <div style="color: #4CAF50; font-size: 18px;">→</div>
+        <div style="padding: 10px 16px; background: #4a148c; border-radius: 8px; text-align: center;">
+          <div style="font-weight: bold; color: #ce93d8;">数据库</div>
+          <div style="font-size: 11px; color: #888;">SQLite / H2</div>
+        </div>
+        <div style="color: #4CAF50; font-size: 18px;">→</div>
+        <div style="padding: 10px 16px; background: #b71c1c; border-radius: 8px; text-align: center;">
+          <div style="font-weight: bold; color: #ef9a9a;">REST API</div>
+          <div style="font-size: 11px; color: #888;">供前端调用</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 20px;">
+  <h3>采集方式一：JSONL 文件解析器</h3>
+  <div style="padding: 12px; background: rgba(255,255,255,0.03); border-radius: 6px; font-size: 13px; line-height: 1.8;">
+    <p><strong>扫描目录：</strong><code>C:\Users\DELL\.claude\projects\</code></p>
+    <p><strong>解析策略：</strong></p>
+    <ul>
+      <li>定时扫描（每 5s）检测新会话文件</li>
+      <li>增量解析：记录每文件的已读取行号，只读新增部分</li>
+      <li>过滤 token=0 的中间消息，只保留最终 assistant 消息的 usage</li>
+    </ul>
+    <p><strong>提取数据：</strong></p>
+    <ul>
+      <li>Token 用量：input_tokens, output_tokens, cache tokens</li>
+      <li>工具调用：tool_use 类型的 name + input</li>
+      <li>会话元信息：model, gitBranch, timestamp, version</li>
+      <li>对话内容：user prompt + assistant text（可选存储）</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 20px;">
+  <h3>采集方式二：Hooks 实时推送</h3>
+  <div style="padding: 12px; background: rgba(255,255,255,0.03); border-radius: 6px; font-size: 13px; line-height: 1.8;">
+    <p><strong>注册 Hook 脚本：</strong>在 <code>settings.json</code> 中配置 Hook</p>
+    <p><strong>Hook 脚本功能：</strong>将事件数据 POST 到 SpringBoot 后端的 <code>/api/hooks/event</code></p>
+    <p><strong>捕获的事件：</strong></p>
+    <ul>
+      <li><strong>PostToolUse</strong> → 工具执行完成，更新实时状态</li>
+      <li><strong>UserPromptSubmit</strong> → 用户提交新 prompt，标记"工作中"</li>
+      <li><strong>Stop</strong> → Agent 停止，标记"完成"</li>
+      <li><strong>Notification</strong> → 权限请求等运维事件</li>
+    </ul>
+    <p><strong>实时状态映射：</strong></p>
+    <ul>
+      <li>UserPromptSubmit → 🔴 工作中（动画：熊猫敲键盘）</li>
+      <li>PostToolUse → 🟡 执行工具（动画：熊猫操作中）</li>
+      <li>Stop → 🟢 完成（动画：熊猫举 DONE 牌）</li>
+      <li>Notification(permission) → 🟠 等待确认（动画：熊猫等待）</li>
+    </ul>
+  </div>
+</div>

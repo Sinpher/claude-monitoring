@@ -1,0 +1,104 @@
+<h2>设计详情：实时状态悬浮窗</h2>
+<p class="subtitle">桌面悬浮窗 + 动画形象系统</p>
+
+<div class="section">
+  <h3>悬浮窗外观</h3>
+  <div class="mockup">
+    <div class="mockup-body" style="padding: 20px; display: flex; justify-content: center;">
+      <div style="width: 280px; background: #1a1a2e; border-radius: 16px; border: 1px solid #333; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.5);">
+        <!-- 标题栏 -->
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: rgba(255,255,255,0.05); border-bottom: 1px solid #333;">
+          <span style="font-size: 12px; color: #888;">Claude Monitor</span>
+          <div style="display: flex; gap: 4px;">
+            <div style="width: 10px; height: 10px; border-radius: 50%; background: #4CAF50;"></div>
+            <div style="width: 10px; height: 10px; border-radius: 50%; background: #FF9800; display: none;"></div>
+            <div style="width: 10px; height: 10px; border-radius: 50%; background: #f44336; display: none;"></div>
+          </div>
+        </div>
+        <!-- 动画区域 -->
+        <div style="height: 160px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);">
+          <div style="text-align: center;">
+            <div style="font-size: 64px; line-height: 1;">🐼</div>
+            <div style="font-size: 12px; color: #4CAF50; margin-top: 4px;">⌨️ 敲代码中...</div>
+          </div>
+        </div>
+        <!-- 实时数据 -->
+        <div style="padding: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+          <div style="background: rgba(255,255,255,0.05); border-radius: 8px; padding: 8px; text-align: center;">
+            <div style="font-size: 11px; color: #888;">本次 Token</div>
+            <div style="font-size: 16px; color: #90caf9; font-weight: bold;">12.4K</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.05); border-radius: 8px; padding: 8px; text-align: center;">
+            <div style="font-size: 11px; color: #888;">本次费用</div>
+            <div style="font-size: 16px; color: #a5d6a7; font-weight: bold;">$0.08</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.05); border-radius: 8px; padding: 8px; text-align: center;">
+            <div style="font-size: 11px; color: #888;">工具调用</div>
+            <div style="font-size: 16px; color: #ce93d8; font-weight: bold;">23</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.05); border-radius: 8px; padding: 8px; text-align: center;">
+            <div style="font-size: 11px; color: #888;">运行时长</div>
+            <div style="font-size: 16px; color: #ffcc80; font-weight: bold;">15m</div>
+          </div>
+        </div>
+        <!-- 模型信息 -->
+        <div style="padding: 6px 12px; border-top: 1px solid #333; font-size: 11px; color: #666; display: flex; justify-content: space-between;">
+          <span>sonnet-4-6</span>
+          <span>📎 LGarant-backend</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 24px;">
+  <h3>动画形象系统</h3>
+  <div class="mockup">
+    <div class="mockup-body" style="padding: 20px;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <!-- 工作中 -->
+        <div style="background: rgba(76,175,80,0.1); border: 1px solid rgba(76,175,80,0.3); border-radius: 12px; padding: 16px; text-align: center;">
+          <div style="font-size: 48px;">🐼⌨️</div>
+          <div style="font-size: 13px; color: #4CAF50; margin-top: 8px; font-weight: bold;">工作中</div>
+          <div style="font-size: 11px; color: #888; margin-top: 4px;">UserPromptSubmit 触发</div>
+          <div style="font-size: 11px; color: #888;">熊猫敲键盘动画</div>
+        </div>
+        <!-- 完成 -->
+        <div style="background: rgba(33,150,243,0.1); border: 1px solid rgba(33,150,243,0.3); border-radius: 12px; padding: 16px; text-align: center;">
+          <div style="font-size: 48px;">🐼🎉</div>
+          <div style="font-size: 13px; color: #2196F3; margin-top: 8px; font-weight: bold;">完成</div>
+          <div style="font-size: 11px; color: #888; margin-top: 4px;">Stop 事件触发</div>
+          <div style="font-size: 11px; color: #888;">熊猫举 DONE 牌动画</div>
+        </div>
+        <!-- 等待确认 -->
+        <div style="background: rgba(255,152,0,0.1); border: 1px solid rgba(255,152,0,0.3); border-radius: 12px; padding: 16px; text-align: center;">
+          <div style="font-size: 48px;">🐼🤔</div>
+          <div style="font-size: 13px; color: #FF9800; margin-top: 8px; font-weight: bold;">等待确认</div>
+          <div style="font-size: 11px; color: #888; margin-top: 4px;">Permission 请求触发</div>
+          <div style="font-size: 11px; color: #888;">熊猫挠头思考动画</div>
+        </div>
+        <!-- 空闲 -->
+        <div style="background: rgba(158,158,158,0.1); border: 1px solid rgba(158,158,158,0.3); border-radius: 12px; padding: 16px; text-align: center;">
+          <div style="font-size: 48px;">🐼😴</div>
+          <div style="font-size: 13px; color: #9E9E9E; margin-top: 8px; font-weight: bold;">空闲</div>
+          <div style="font-size: 11px; color: #888; margin-top: 4px;">无活跃会话</div>
+          <div style="font-size: 11px; color: #888;">熊猫打盹动画</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 20px;">
+  <h3>形象替换机制</h3>
+  <div style="padding: 12px; background: rgba(255,255,255,0.03); border-radius: 6px; font-size: 13px; line-height: 1.8;">
+    <p>动画形象支持插件式替换，用户可以选择不同的形象包：</p>
+    <ul>
+      <li><strong>形象包结构</strong>：每个形象包包含 4 个状态动画（工作中/完成/等待/空闲）</li>
+      <li><strong>格式</strong>：Lottie 动画 JSON 或 Spine 动画数据</li>
+      <li><strong>内置形象</strong>：熊猫（默认）、猫咪、机器人</li>
+      <li><strong>自定义</strong>：用户可放入自己的动画文件到指定目录</li>
+      <li><strong>切换方式</strong>：右键悬浮窗 → 选择形象</li>
+    </ul>
+  </div>
+</div>

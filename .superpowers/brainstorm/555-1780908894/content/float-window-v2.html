@@ -1,0 +1,98 @@
+<h2>悬浮窗设计更新：折叠/展开模式</h2>
+<p class="subtitle">平时只显示动画图标，悬停展开完整信息</p>
+
+<div class="section">
+  <h3>两种状态</h3>
+  <div class="mockup">
+    <div class="mockup-body" style="padding: 20px; display: flex; gap: 40px; justify-content: center; align-items: flex-start;">
+      <!-- 折叠态 -->
+      <div style="text-align: center;">
+        <div style="font-size: 12px; color: #888; margin-bottom: 8px;">折叠态（默认）</div>
+        <div style="width: 64px; height: 64px; background: #1a1a2e; border-radius: 50%; border: 2px solid #4CAF50; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(76,175,80,0.3); cursor: pointer; transition: all 0.3s;">
+          <div style="font-size: 36px;">🐼</div>
+        </div>
+        <div style="font-size: 10px; color: #4CAF50; margin-top: 4px;">工作中</div>
+        <div style="font-size: 10px; color: #666; margin-top: 2px;">可拖拽移动</div>
+      </div>
+
+      <!-- 箭头 -->
+      <div style="display: flex; align-items: center; font-size: 24px; color: #4CAF50; padding-top: 20px;">
+        鼠标悬停 →
+      </div>
+
+      <!-- 展开态 -->
+      <div style="text-align: center;">
+        <div style="font-size: 12px; color: #888; margin-bottom: 8px;">展开态（悬停时）</div>
+        <div style="width: 280px; background: #1a1a2e; border-radius: 16px; border: 1px solid #333; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.5);">
+          <!-- 动画 + 状态 -->
+          <div style="height: 120px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);">
+            <div style="text-align: center;">
+              <div style="font-size: 56px; line-height: 1;">🐼</div>
+              <div style="font-size: 12px; color: #4CAF50; margin-top: 4px;">⌨️ 敲代码中...</div>
+            </div>
+          </div>
+          <!-- 实时数据 -->
+          <div style="padding: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div style="background: rgba(255,255,255,0.05); border-radius: 8px; padding: 8px; text-align: center;">
+              <div style="font-size: 11px; color: #888;">本次 Token</div>
+              <div style="font-size: 16px; color: #90caf9; font-weight: bold;">12.4K</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.05); border-radius: 8px; padding: 8px; text-align: center;">
+              <div style="font-size: 11px; color: #888;">本次费用</div>
+              <div style="font-size: 16px; color: #a5d6a7; font-weight: bold;">$0.08</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.05); border-radius: 8px; padding: 8px; text-align: center;">
+              <div style="font-size: 11px; color: #888;">工具调用</div>
+              <div style="font-size: 16px; color: #ce93d8; font-weight: bold;">23</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.05); border-radius: 8px; padding: 8px; text-align: center;">
+              <div style="font-size: 11px; color: #888;">运行时长</div>
+              <div style="font-size: 16px; color: #ffcc80; font-weight: bold;">15m</div>
+            </div>
+          </div>
+          <!-- 底部信息 -->
+          <div style="padding: 6px 12px; border-top: 1px solid #333; font-size: 11px; color: #666; display: flex; justify-content: space-between;">
+            <span>sonnet-4-6</span>
+            <span>📎 LGarant-backend</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 24px;">
+  <h3>交互行为</h3>
+  <div style="padding: 12px; background: rgba(255,255,255,0.03); border-radius: 6px; font-size: 13px; line-height: 1.8;">
+    <ul>
+      <li><strong>折叠态</strong>：64x64 圆形，显示动画形象 + 状态色边框，可拖拽移动位置</li>
+      <li><strong>展开触发</strong>：鼠标悬停 0.5s 后展开，带平滑动画过渡</li>
+      <li><strong>折叠触发</strong>：鼠标移开 1s 后自动折叠</li>
+      <li><strong>右键菜单</strong>：选择形象、打开仪表盘、设置、退出</li>
+      <li><strong>状态边框色</strong>：绿色=工作中、蓝色=完成、橙色=等待确认、灰色=空闲</li>
+      <li><strong>点击动画图标</strong>：打开完整 Web 仪表盘</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 20px;">
+  <h3>状态边框色示例</h3>
+  <div style="display: flex; gap: 24px; justify-content: center; padding: 12px;">
+    <div style="text-align: center;">
+      <div style="width: 48px; height: 48px; border-radius: 50%; border: 3px solid #4CAF50; display: flex; align-items: center; justify-content: center; font-size: 28px;">🐼</div>
+      <div style="font-size: 11px; color: #4CAF50; margin-top: 4px;">工作中</div>
+    </div>
+    <div style="text-align: center;">
+      <div style="width: 48px; height: 48px; border-radius: 50%; border: 3px solid #2196F3; display: flex; align-items: center; justify-content: center; font-size: 28px;">🐼</div>
+      <div style="font-size: 11px; color: #2196F3; margin-top: 4px;">完成</div>
+    </div>
+    <div style="text-align: center;">
+      <div style="width: 48px; height: 48px; border-radius: 50%; border: 3px solid #FF9800; display: flex; align-items: center; justify-content: center; font-size: 28px;">🐼</div>
+      <div style="font-size: 11px; color: #FF9800; margin-top: 4px;">等待确认</div>
+    </div>
+    <div style="text-align: center;">
+      <div style="width: 48px; height: 48px; border-radius: 50%; border: 3px solid #9E9E9E; display: flex; align-items: center; justify-content: center; font-size: 28px;">🐼</div>
+      <div style="font-size: 11px; color: #9E9E9E; margin-top: 4px;">空闲</div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,103 @@
+<h2>三种数据来源对比</h2>
+<p class="subtitle">Claude Code 监控工具的数据获取方式分析</p>
+
+<div class="section">
+  <div class="split">
+    <div class="mockup">
+      <div class="mockup-header">方案 A：本地文件解析</div>
+      <div class="mockup-body" style="padding: 16px;">
+        <h3 style="color: #4CAF50;">数据最完整</h3>
+        <div class="pros-cons">
+          <div class="pros">
+            <h4>优势</h4>
+            <ul>
+              <li><strong>Token 数据</strong>：per-message 精度</li>
+              <li><strong>对话内容</strong>：完整 user/assistant 交互</li>
+              <li><strong>工具调用</strong>：含参数和结果</li>
+              <li><strong>文件变更</strong>：编辑历史备份</li>
+              <li><strong>项目维度</strong>：按项目/会话分组</li>
+              <li><strong>Windows 兼容</strong>：完全支持</li>
+            </ul>
+          </div>
+          <div class="cons">
+            <h4>劣势</h4>
+            <ul>
+              <li>非实时，需事后解析 JSONL</li>
+              <li>需处理流式中间消息（token=0）</li>
+              <li>文件可能较大，需增量解析</li>
+            </ul>
+          </div>
+        </div>
+        <p style="margin-top:12px;font-size:13px;color:#888;">核心文件：<code>.claude/projects/{slug}/{sessionId}.jsonl</code></p>
+      </div>
+    </div>
+
+    <div class="mockup">
+      <div class="mockup-header">方案 B：Anthropic API</div>
+      <div class="mockup-body" style="padding: 16px;">
+        <h3 style="color: #FF9800;">数据最有限</h3>
+        <div class="pros-cons">
+          <div class="pros">
+            <h4>优势</h4>
+            <ul>
+              <li>Console 有聚合用量统计</li>
+              <li>可做整体预算监控</li>
+              <li>实现简单</li>
+            </ul>
+          </div>
+          <div class="cons">
+            <h4>劣势</h4>
+            <ul>
+              <li><strong>无 per-session 数据</strong></li>
+              <li>无对话内容</li>
+              <li>无工具调用详情</li>
+              <li>需组织管理员权限</li>
+              <li>与本地 JSONL 数据重复</li>
+            </ul>
+          </div>
+        </div>
+        <p style="margin-top:12px;font-size:13px;color:#888;">仅适合整体预算监控，不适合精细监控</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 20px;">
+  <div class="mockup">
+    <div class="mockup-header">方案 C：Claude Code Hooks</div>
+    <div class="mockup-body" style="padding: 16px;">
+      <h3 style="color: #2196F3;">实时性最强</h3>
+      <div class="pros-cons">
+        <div class="pros">
+          <h4>优势</h4>
+          <ul>
+            <li><strong>实时事件推送</strong>：事件发生即捕获</li>
+            <li>PreToolUse / PostToolUse 捕获工具调用</li>
+            <li>UserPromptSubmit 捕获用户输入</li>
+            <li>Stop 捕获会话结束</li>
+            <li>可推送到 HTTP 服务/数据库</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>劣势</h4>
+          <ul>
+            <li><strong>无 Token 数据</strong>（usage 仅在 assistant 消息中）</li>
+            <li>无 assistant 响应内容</li>
+            <li>Windows 需 .cmd 包装器</li>
+            <li>timeout 较短（默认 10s）</li>
+          </ul>
+        </div>
+      </div>
+      <p style="margin-top:12px;font-size:13px;color:#888;">可用事件：PreToolUse, PostToolUse, UserPromptSubmit, Stop, Notification</p>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 24px; padding: 16px; background: #1a1a2e; border-radius: 8px; border: 1px solid #4CAF50;">
+  <h3 style="color: #4CAF50; margin-bottom: 8px;">推荐：混合方案（A + C）</h3>
+  <p style="color: #e0e0e0; line-height: 1.6;">
+    以<strong>本地 JSONL 文件解析</strong>为主数据源（获取完整 token、对话、工具调用数据），<br>
+    以 <strong>Hooks</strong> 作为实时事件推送通道（实时感知工具调用和用户行为），<br>
+    Anthropic Console API 仅用于整体预算监控（可选）。
+  </p>
+</div>
