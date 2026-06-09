@@ -1,1 +1,11 @@
 .superpowers/
+.gradle/
+build/
+.idea/
+*.class
+*.jar
+*.war
+*.log
+.codeartsdoer/
+y
+y.pub
