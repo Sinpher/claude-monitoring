@@ -1,0 +1,23 @@
+# Anthropic 模型定价（USD per 1M tokens）
+# 参考：https://www.anthropic.com/pricing
+models:
+  claude-sonnet-4-6:
+    input: 3.0
+    output: 15.0
+    cache_creation: 3.75
+    cache_read: 0.30
+  claude-opus-4-6:
+    input: 15.0
+    output: 75.0
+    cache_creation: 18.75
+    cache_read: 1.50
+  claude-haiku-4-5:
+    input: 0.80
+    output: 4.0
+    cache_creation: 1.0
+    cache_read: 0.08
+  default:
+    input: 3.0
+    output: 15.0
+    cache_creation: 3.75
+    cache_read: 0.30
