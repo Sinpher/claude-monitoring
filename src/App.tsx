@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { FloatWindow } from "./components/float/FloatWindow";
+import { Dashboard } from "./components/dashboard/Dashboard";
 
 /**
  * 应用根组件，根据窗口标签决定渲染悬浮窗还是仪表盘。
@@ -21,11 +22,7 @@ function App() {
     );
   }
 
-  return (
-    <div className="w-full h-full bg-cm-bg text-cm-text">
-      <div className="p-8 text-center text-cm-muted">仪表盘（待实现）</div>
-    </div>
-  );
+  return <Dashboard />;
 }
 
 export default App;
