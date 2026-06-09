@@ -9,3 +9,6 @@ build/
 .codeartsdoer/
 y
 y.pub
+node_modules/
+dist/
+src-tauri/target/
