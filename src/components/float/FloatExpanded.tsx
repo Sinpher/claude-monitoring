@@ -10,12 +10,14 @@ interface FloatExpandedProps {
   agentStatuses: AgentStatus[];
   /** 鼠标离开回调 */
   onHoverEnd: () => void;
+  /** 形象包名称 */
+  packName?: string;
 }
 
 /**
  * 悬浮窗展开态，显示动画形象和实时数据卡片。
  */
-export function FloatExpanded({ status, agentStatuses, onHoverEnd }: FloatExpandedProps) {
+export function FloatExpanded({ status, agentStatuses, onHoverEnd, packName = "panda" }: FloatExpandedProps) {
   const { data: todayUsage } = useApi(fetchTodayUsage, []);
   const currentAgent = agentStatuses.length > 0 ? agentStatuses[0] : null;
 
@@ -45,7 +47,7 @@ export function FloatExpanded({ status, agentStatuses, onHoverEnd }: FloatExpand
         style={{ background: "linear-gradient(135deg, #0d1117 0%, #161b22 100%)" }}
       >
         <div className="text-center">
-          <AvatarPlayer status={status} size={56} />
+          <AvatarPlayer status={status} size={56} packName={packName} />
           <div
             className="text-xs mt-1"
             style={{ color: STATUS_COLORS[status] }}

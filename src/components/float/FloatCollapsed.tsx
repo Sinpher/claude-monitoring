@@ -9,12 +9,14 @@ interface FloatCollapsedProps {
   onHoverStart: () => void;
   /** 点击回调（打开仪表盘） */
   onClick: () => void;
+  /** 形象包名称 */
+  packName?: string;
 }
 
 /**
  * 悬浮窗折叠态，显示圆形动画图标和状态色边框。
  */
-export function FloatCollapsed({ status, onHoverStart, onClick }: FloatCollapsedProps) {
+export function FloatCollapsed({ status, onHoverStart, onClick, packName = "panda" }: FloatCollapsedProps) {
   return (
     <div
       className="relative"
@@ -26,7 +28,7 @@ export function FloatCollapsed({ status, onHoverStart, onClick }: FloatCollapsed
         className="absolute inset-0 flex items-center justify-center"
         onClick={onClick}
       >
-        <AvatarPlayer status={status} size={40} />
+        <AvatarPlayer status={status} size={40} packName={packName} />
       </div>
     </div>
   );
