@@ -35,6 +35,16 @@ public interface ToolCallRepository extends JpaRepository<ToolCall, Long> {
     List<Object[]> countByToolNameBetween(LocalDateTime start, LocalDateTime end);
 
     /**
+     * 统计指定时间范围内各工具的平均耗时。
+     *
+     * @param start 开始时间
+     * @param end   结束时间
+     * @return 工具名和平均耗时的投影列表
+     */
+    @Query("SELECT tc.toolName, AVG(tc.duration) FROM ToolCall tc WHERE tc.timestamp BETWEEN :start AND :end AND tc.duration IS NOT NULL GROUP BY tc.toolName ORDER BY AVG(tc.duration) DESC")
+    List<Object[]> avgDurationByToolNameBetween(LocalDateTime start, LocalDateTime end);
+
+    /**
      * 统计指定时间范围内的工具调用总数。
      *
      * @param start 开始时间

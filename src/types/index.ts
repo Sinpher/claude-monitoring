@@ -27,6 +27,13 @@ export interface DailyUsage {
   toolCallCount: number;
 }
 
+/** 工具调用统计 DTO */
+export interface ToolStats {
+  toolName: string;
+  count: number;
+  avgDuration: number;
+}
+
 /** Agent 实时状态 DTO */
 export interface AgentStatus {
   sessionId: string;

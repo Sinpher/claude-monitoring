@@ -1,4 +1,4 @@
-import { API_BASE, SessionDetail, DailyUsage } from "../types";
+import { API_BASE, SessionDetail, DailyUsage, ToolStats } from "../types";
 
 /**
  * 获取会话列表。
@@ -54,5 +54,22 @@ export async function fetchDailyUsage(
  */
 export async function fetchTodayUsage(): Promise<DailyUsage> {
   const res = await fetch(`${API_BASE}/api/usage/today`);
+  return res.json();
+}
+
+/**
+ * 获取工具调用统计（按工具名称聚合）。
+ *
+ * @param start 开始日期
+ * @param end   结束日期
+ * @returns 工具统计列表
+ */
+export async function fetchToolStats(
+  start: string,
+  end: string
+): Promise<ToolStats[]> {
+  const res = await fetch(
+    `${API_BASE}/api/usage/tools?start=${start}&end=${end}`
+  );
   return res.json();
 }
