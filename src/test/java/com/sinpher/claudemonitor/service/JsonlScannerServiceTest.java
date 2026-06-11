@@ -3,6 +3,7 @@ package com.sinpher.claudemonitor.service;
 import com.sinpher.claudemonitor.model.Session;
 import com.sinpher.claudemonitor.model.ToolCall;
 import com.sinpher.claudemonitor.repository.SessionRepository;
+import com.sinpher.claudemonitor.repository.TokenUsageRepository;
 import com.sinpher.claudemonitor.repository.ToolCallRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -45,6 +46,9 @@ class JsonlScannerServiceTest {
     private ToolCallRepository toolCallRepository;
 
     @Mock
+    private TokenUsageRepository tokenUsageRepository;
+
+    @Mock
     private CostCalculationService costCalculationService;
 
     private JsonlScannerService scannerService;
@@ -61,6 +65,7 @@ class JsonlScannerServiceTest {
                 jsonlParserService,
                 sessionRepository,
                 toolCallRepository,
+                tokenUsageRepository,
                 costCalculationService
         );
         // 注入配置值
@@ -95,6 +100,7 @@ class JsonlScannerServiceTest {
                 .thenReturn(JsonlParserService.ParseResult.builder()
                         .session(null)
                         .toolCalls(List.of())
+                        .tokenUsages(List.of())
                         .linesRead(1)
                         .build());
 
@@ -133,6 +139,7 @@ class JsonlScannerServiceTest {
                 .thenReturn(JsonlParserService.ParseResult.builder()
                         .session(newSession)
                         .toolCalls(List.of(toolCall))
+                        .tokenUsages(List.of())
                         .linesRead(1)
                         .build());
         when(sessionRepository.findById("new-session-001")).thenReturn(Optional.empty());
@@ -183,6 +190,7 @@ class JsonlScannerServiceTest {
                 .thenReturn(JsonlParserService.ParseResult.builder()
                         .session(incrementalSession)
                         .toolCalls(List.of())
+                        .tokenUsages(List.of())
                         .linesRead(1)
                         .build());
         when(sessionRepository.findById("existing-session-001")).thenReturn(Optional.of(existingSession));
@@ -211,6 +219,7 @@ class JsonlScannerServiceTest {
                 .thenReturn(JsonlParserService.ParseResult.builder()
                         .session(null)
                         .toolCalls(List.of())
+                        .tokenUsages(List.of())
                         .linesRead(1)
                         .build());
 
@@ -225,6 +234,7 @@ class JsonlScannerServiceTest {
                 .thenReturn(JsonlParserService.ParseResult.builder()
                         .session(null)
                         .toolCalls(List.of())
+                        .tokenUsages(List.of())
                         .linesRead(2)
                         .build());
 

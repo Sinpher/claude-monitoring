@@ -4,6 +4,7 @@ import com.sinpher.claudemonitor.dto.AgentStatusDto;
 import com.sinpher.claudemonitor.model.AgentStatus;
 import com.sinpher.claudemonitor.service.AgentStatusService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -25,18 +26,20 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class AgentStatusHandler extends TextWebSocketHandler {
 
     private final AgentStatusService agentStatusService;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
 
     /** 当前连接的 WebSocket 会话列表 */
     private final List<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
 
     /**
-     * 构造函数。
+     * 构造函数，注册 JavaTimeModule 以支持 LocalDateTime 序列化。
      *
      * @param agentStatusService Agent 状态服务
      */
     public AgentStatusHandler(AgentStatusService agentStatusService) {
         this.agentStatusService = agentStatusService;
+        this.objectMapper = new ObjectMapper();
+        this.objectMapper.registerModule(new JavaTimeModule());
     }
 
     /**

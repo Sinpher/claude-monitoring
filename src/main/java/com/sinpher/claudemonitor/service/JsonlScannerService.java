@@ -1,8 +1,10 @@
 package com.sinpher.claudemonitor.service;
 
 import com.sinpher.claudemonitor.model.Session;
+import com.sinpher.claudemonitor.model.TokenUsage;
 import com.sinpher.claudemonitor.model.ToolCall;
 import com.sinpher.claudemonitor.repository.SessionRepository;
+import com.sinpher.claudemonitor.repository.TokenUsageRepository;
 import com.sinpher.claudemonitor.repository.ToolCallRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * JSONL 文件扫描调度服务，定时扫描 Claude Code 的项目目录，
  * 发现新的会话文件并增量解析，将结果持久化到数据库。
+ * 同时根据文件增长情况推断 Agent 工作状态。
  *
  * @author sinpher
  */
@@ -29,6 +32,7 @@ public class JsonlScannerService {
     private final JsonlParserService jsonlParserService;
     private final SessionRepository sessionRepository;
     private final ToolCallRepository toolCallRepository;
+    private final TokenUsageRepository tokenUsageRepository;
     private final CostCalculationService costCalculationService;
 
     /** Claude Code 数据目录路径 */
@@ -38,21 +42,27 @@ public class JsonlScannerService {
     /** 每个文件的已读取行号缓存，key 为文件绝对路径 */
     private final ConcurrentHashMap<String, Integer> fileLineCache = new ConcurrentHashMap<>();
 
+    /** 标记文件是否已完成首次扫描（首次扫描仅建立基准行号，不触发状态更新） */
+    private final ConcurrentHashMap<String, Boolean> fileInitialScanDone = new ConcurrentHashMap<>();
+
     /**
      * 构造函数。
      *
      * @param jsonlParserService     JSONL 解析服务
      * @param sessionRepository      会话仓库
      * @param toolCallRepository     工具调用仓库
+     * @param tokenUsageRepository   Token 用量仓库
      * @param costCalculationService 成本计算服务
      */
     public JsonlScannerService(JsonlParserService jsonlParserService,
                                SessionRepository sessionRepository,
                                ToolCallRepository toolCallRepository,
+                               TokenUsageRepository tokenUsageRepository,
                                CostCalculationService costCalculationService) {
         this.jsonlParserService = jsonlParserService;
         this.sessionRepository = sessionRepository;
         this.toolCallRepository = toolCallRepository;
+        this.tokenUsageRepository = tokenUsageRepository;
         this.costCalculationService = costCalculationService;
     }
 
@@ -106,11 +116,13 @@ public class JsonlScannerService {
     private void processJsonlFile(Path jsonlFile, String projectName) {
         String fileKey = jsonlFile.toAbsolutePath().toString();
         int lastLine = fileLineCache.getOrDefault(fileKey, 0);
+        boolean isFirstScan = !fileInitialScanDone.containsKey(fileKey);
 
         JsonlParserService.ParseResult result = jsonlParserService.parseFile(jsonlFile, lastLine);
 
         if (result.getSession() == null) {
             fileLineCache.put(fileKey, result.getLinesRead());
+            fileInitialScanDone.put(fileKey, true);
             return;
         }
 
@@ -148,6 +160,12 @@ public class JsonlScannerService {
             toolCallRepository.save(toolCall);
         }
 
+        // 保存 Token 用量记录
+        for (TokenUsage tokenUsage : result.getTokenUsages()) {
+            tokenUsageRepository.save(tokenUsage);
+        }
+
         fileLineCache.put(fileKey, result.getLinesRead());
+        fileInitialScanDone.put(fileKey, true);
     }
 }

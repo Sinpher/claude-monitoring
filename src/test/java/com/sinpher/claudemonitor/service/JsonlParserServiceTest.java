@@ -1,6 +1,7 @@
 package com.sinpher.claudemonitor.service;
 
 import com.sinpher.claudemonitor.model.Session;
+import com.sinpher.claudemonitor.model.TokenUsage;
 import com.sinpher.claudemonitor.model.ToolCall;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -52,6 +53,14 @@ class JsonlParserServiceTest {
 
         // 结果验证：行数
         assertThat(result.getLinesRead()).as("应读取 3 行").isEqualTo(3);
+
+        // 结果验证：TokenUsage 记录
+        assertThat(result.getTokenUsages()).as("应有 1 条 TokenUsage 记录（过滤 token=0 的消息）").hasSize(1);
+        TokenUsage tu = result.getTokenUsages().get(0);
+        assertThat(tu.getInputTokens()).as("TokenUsage inputTokens 应为 5000").isEqualTo(5000L);
+        assertThat(tu.getOutputTokens()).as("TokenUsage outputTokens 应为 200").isEqualTo(200L);
+        assertThat(tu.getCacheTokens()).as("TokenUsage cacheTokens 应为 1500").isEqualTo(1500L);
+        assertThat(tu.getSessionId()).as("TokenUsage sessionId 应为 test-001").isEqualTo("test-001");
     }
 
     @Test
@@ -72,6 +81,10 @@ class JsonlParserServiceTest {
         JsonlParserService.ParseResult result2 = parserService.parseFile(jsonlFile, 1);
         assertThat(result2.getLinesRead()).as("第二次增量解析应累计读取 2 行").isEqualTo(2);
         assertThat(result2.getSession().getTotalInputTokens()).as("增量解析应提取到新增的 token 数据").isEqualTo(100L);
+
+        // 结果验证：增量解析应产生 TokenUsage 记录
+        assertThat(result2.getTokenUsages()).as("增量解析应有 1 条 TokenUsage 记录").hasSize(1);
+        assertThat(result2.getTokenUsages().get(0).getInputTokens()).as("增量 TokenUsage inputTokens 应为 100").isEqualTo(100L);
     }
 
     @Test
@@ -91,5 +104,31 @@ class JsonlParserServiceTest {
         // 结果验证：token=0 的消息不计入累计
         assertThat(result.getSession().getTotalInputTokens()).as("应过滤 token=0 的中间消息").isEqualTo(3000L);
         assertThat(result.getSession().getTotalOutputTokens()).as("输出 token 应为 100").isEqualTo(100L);
+
+        // 结果验证：token=0 的消息不应产生 TokenUsage 记录
+        assertThat(result.getTokenUsages()).as("只有非零 token 消息才产生 TokenUsage 记录").hasSize(1);
+        assertThat(result.getTokenUsages().get(0).getInputTokens()).as("TokenUsage inputTokens 应为 3000").isEqualTo(3000L);
+    }
+
+    @Test
+    @DisplayName("跨天的 assistant 消息应产生不同日期的 TokenUsage 记录")
+    void shouldGenerateTokenUsageWithDifferentDates(@TempDir Path tempDir) throws IOException {
+        // 测试数据准备：两天各一条 assistant 消息
+        String jsonlContent = """
+                {"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"day1"}],"model":"claude-sonnet-4-6"},"usage":{"input_tokens":1000,"output_tokens":50},"sessionId":"test-004","timestamp":"2026-06-09T23:00:00Z"}
+                {"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"day2"}],"model":"claude-sonnet-4-6"},"usage":{"input_tokens":2000,"output_tokens":100},"sessionId":"test-004","timestamp":"2026-06-10T01:00:00Z"}
+                """;
+        Path jsonlFile = tempDir.resolve("test-004.jsonl");
+        Files.writeString(jsonlFile, jsonlContent);
+
+        // 被测动作执行
+        JsonlParserService.ParseResult result = parserService.parseFile(jsonlFile, 0);
+
+        // 结果验证：两条 TokenUsage 记录，分别属于不同日期
+        assertThat(result.getTokenUsages()).as("应有 2 条 TokenUsage 记录").hasSize(2);
+        assertThat(result.getTokenUsages().get(0).getTimestamp().toLocalDate())
+                .as("第一条记录应在 6 月 9 日").isEqualTo(java.time.LocalDate.of(2026, 6, 9));
+        assertThat(result.getTokenUsages().get(1).getTimestamp().toLocalDate())
+                .as("第二条记录应在 6 月 10 日").isEqualTo(java.time.LocalDate.of(2026, 6, 10));
     }
 }

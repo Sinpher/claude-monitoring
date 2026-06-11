@@ -1,9 +1,9 @@
 server:
-  port: 8080
+  port: 8081
 
 spring:
   datasource:
-    url: jdbc:sqlite:${user.home}/.claude-monitor/data.db
+    url: jdbc:sqlite:${user.home}/.claude-monitor/data.db?busy_timeout=5000
     driver-class-name: org.sqlite.JDBC
   jpa:
     database-platform: org.hibernate.community.dialect.SQLiteDialect

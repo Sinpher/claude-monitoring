@@ -3,6 +3,7 @@ package com.sinpher.claudemonitor.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sinpher.claudemonitor.model.Session;
+import com.sinpher.claudemonitor.model.TokenUsage;
 import com.sinpher.claudemonitor.model.ToolCall;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,6 +42,8 @@ public class JsonlParserService {
         private Session session;
         /** 解析出的工具调用列表 */
         private List<ToolCall> toolCalls;
+        /** 解析出的 Token 用量记录列表（每条 assistant 消息一条） */
+        private List<TokenUsage> tokenUsages;
         /** 已读取的总行数 */
         private int linesRead;
     }
@@ -55,6 +58,7 @@ public class JsonlParserService {
     public ParseResult parseFile(Path filePath, int lastLine) {
         Session.SessionBuilder sessionBuilder = Session.builder();
         List<ToolCall> toolCalls = new ArrayList<>();
+        List<TokenUsage> tokenUsages = new ArrayList<>();
         long totalInputTokens = 0;
         long totalOutputTokens = 0;
         long totalCacheTokens = 0;
@@ -87,7 +91,11 @@ public class JsonlParserService {
                             sessionBuilder.startedAt(parseTimestamp(timestamp));
                         }
                     } else if ("assistant".equals(type)) {
+                        // usage 可能在顶层或 message 内部
                         JsonNode usage = node.path("usage");
+                        if (usage.isMissingNode() || !usage.isObject()) {
+                            usage = node.path("message").path("usage");
+                        }
                         long inputTokens = usage.path("input_tokens").asLong(0);
                         long outputTokens = usage.path("output_tokens").asLong(0);
                         long cacheCreation = usage.path("cache_creation_input_tokens").asLong(0);
@@ -97,6 +105,18 @@ public class JsonlParserService {
                             totalInputTokens += inputTokens;
                             totalOutputTokens += outputTokens;
                             totalCacheTokens += cacheCreation + cacheRead;
+
+                            // 记录每条 assistant 消息的 token 用量，用于按天聚合
+                            String msgTimestamp = node.path("timestamp").asText(null);
+                            LocalDateTime tokenTimestamp = msgTimestamp != null
+                                    ? parseTimestamp(msgTimestamp) : LocalDateTime.now();
+                            tokenUsages.add(TokenUsage.builder()
+                                    .sessionId(sessionId != null ? sessionId : "unknown")
+                                    .inputTokens(inputTokens)
+                                    .outputTokens(outputTokens)
+                                    .cacheTokens(cacheCreation + cacheRead)
+                                    .timestamp(tokenTimestamp)
+                                    .build());
                         }
 
                         if (sessionId == null) {
@@ -139,6 +159,7 @@ public class JsonlParserService {
             return ParseResult.builder()
                     .linesRead(lastLine)
                     .toolCalls(List.of())
+                    .tokenUsages(List.of())
                     .build();
         }
 
@@ -155,6 +176,7 @@ public class JsonlParserService {
         return ParseResult.builder()
                 .session(sessionId != null ? sessionBuilder.build() : null)
                 .toolCalls(toolCalls)
+                .tokenUsages(tokenUsages)
                 .linesRead(linesRead)
                 .build();
     }
