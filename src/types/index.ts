@@ -75,4 +75,4 @@ export const STATUS_LABELS: Record<AgentStatusType, string> = {
 };
 
 /** 后端 API 基础 URL */
-export const API_BASE = "http://localhost:8080";
+export const API_BASE = "http://localhost:8081";

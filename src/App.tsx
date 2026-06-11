@@ -16,7 +16,10 @@ function App() {
 
   if (windowLabel === "float") {
     return (
-      <div className="w-full h-full flex items-center justify-center" data-tauri-drag-region>
+      <div
+        className="w-full h-full"
+        style={{ background: "transparent" }}
+      >
         <FloatWindow />
       </div>
     );

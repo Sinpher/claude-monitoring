@@ -1,6 +1,5 @@
 import { AgentStatusType } from "../../types";
 import { AvatarPlayer } from "../avatar/AvatarPlayer";
-import { StatusIndicator } from "./StatusIndicator";
 
 interface FloatCollapsedProps {
   /** 当前状态 */
@@ -14,22 +13,16 @@ interface FloatCollapsedProps {
 }
 
 /**
- * 悬浮窗折叠态，显示圆形动画图标和状态色边框。
+ * 悬浮窗折叠态，图标充满整个窗口区域。
  */
 export function FloatCollapsed({ status, onHoverStart, onClick, packName = "panda" }: FloatCollapsedProps) {
   return (
     <div
-      className="relative"
+      className="cursor-pointer"
       onMouseEnter={onHoverStart}
-      data-tauri-drag-region
+      onClick={onClick}
     >
-      <StatusIndicator status={status} size={64} />
-      <div
-        className="absolute inset-0 flex items-center justify-center"
-        onClick={onClick}
-      >
-        <AvatarPlayer status={status} size={40} packName={packName} />
-      </div>
+      <AvatarPlayer status={status} size={72} packName={packName} />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 use tauri::Manager;
+use tauri::webview::Color;
 use tauri_plugin_shell::ShellExt;
 
 /// 启动 Tauri 应用，注册窗口和 SpringBoot 子进程管理。
@@ -7,8 +8,10 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
         .setup(|app| {
-            // 显示悬浮窗
+            // 显示悬浮窗并设置透明背景
             if let Some(float_window) = app.get_webview_window("float") {
+                // Windows 上 WebView2 默认白色背景，需设为透明
+                let _ = float_window.set_background_color(Some(Color(0, 0, 0, 0)));
                 let _ = float_window.show();
             }
 
